@@ -5,7 +5,10 @@ import { GetGenerationRequestsReturn } from '~/server/services/generation/genera
 import { showErrorNotification } from '~/utils/notifications';
 import { trpc } from '~/utils/trpc';
 import { useCallback, useEffect, useMemo } from 'react';
-import { GetGenerationRequestsInput } from '~/server/schema/generation.schema';
+import {
+  GetGenerationRequestsInput,
+  RefineGenerationInput,
+} from '~/server/schema/generation.schema';
 import { GenerationRequestStatus, Generation } from '~/server/services/generation/generation.types';
 import { useDebouncer } from '~/utils/debouncer';
 import { useSignalConnection } from '~/components/Signals/SignalsProvider';
@@ -201,4 +204,26 @@ export const useImageGenStatusUpdate = () => {
   );
 
   useSignalConnection(SignalMessages.ImageGenStatusUpdate, onStatusUpdate);
+};
+
+export const useRefineGenerationRequest = () => {
+  const queryUtils = trpc.useContext();
+
+  const refineMutation = trpc.generation.refine.useMutation({
+    onSuccess: async () => {
+      await queryUtils.generation.getRequests.invalidate();
+    },
+    onError: (error) => {
+      showErrorNotification({
+        title: 'Unable to refine image',
+        error: new Error(error.message),
+      });
+    },
+  });
+
+  const handleRefine = async (payload: RefineGenerationInput) => {
+    return refineMutation.mutateAsync(payload);
+  };
+
+  return { refine: handleRefine, loading: refineMutation.isLoading };
 };

@@ -208,3 +208,9 @@ export const prepareModelSchema = z.object({
   id: z.number(),
   baseModel: z.string(),
 });
+
+export type RefineGenerationInput = z.infer<typeof refineGenerationSchema>;
+export const refineGenerationSchema = z.object({
+  jobId: z.string(),
+  type: z.enum(['face', 'subject']),
+});

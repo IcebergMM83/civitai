@@ -7,6 +7,7 @@ import {
   GetGenerationRequestsOutput,
   GetGenerationResourcesInput,
   PrepareModelInput,
+  RefineGenerationInput,
 } from '~/server/schema/generation.schema';
 import { SessionUser } from 'next-auth';
 import { dbRead, dbWrite } from '~/server/db/client';
@@ -737,4 +738,32 @@ export async function prepareModelInOrchestrator({ id, baseModel }: PrepareModel
   if (!response.ok) throw new Error('An unknown error occurred. Please try again later');
 
   return response.data;
+}
+
+export async function refineImageGeneration({ jobId, type }: RefineGenerationInput) {
+  if (type === 'face') {
+    try {
+      const response = await orchestratorCaller.refineFace({ payload: { jobId } });
+
+      if (response.status === 429) throw throwRateLimitError();
+      if (!response.ok) throw new Error('An unknown error occurred. Please try again later');
+
+      return response.data;
+    } catch (e) {
+      const error = e as Error;
+      throw throwBadRequestError(error.message);
+    }
+  } else if (type === 'subject') {
+    try {
+      const response = await orchestratorCaller.refineSubject({ payload: { jobId } });
+
+      if (response.status === 429) throw throwRateLimitError();
+      if (!response.ok) throw new Error('An unknown error occurred. Please try again later');
+
+      return response.data;
+    } catch (e) {
+      const error = e as Error;
+      throw throwBadRequestError(error.message);
+    }
+  }
 }

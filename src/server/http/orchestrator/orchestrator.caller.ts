@@ -91,6 +91,16 @@ class OrchestratorCaller extends HttpCaller {
       payload: { $type: 'prepareModel', ...payload },
     });
   }
+
+  // TODO.manuel
+  public refineFace({ payload }: { payload: { jobId: string } }) {
+    return Promise.resolve({ status: 200, ok: true, data: { jobId: payload.jobId } });
+  }
+
+  // TODO.manuel
+  public refineSubject({ payload }: { payload: { jobId: string } }) {
+    return Promise.resolve({ status: 200, ok: true, data: { jobId: payload.jobId } });
+  }
 }
 
 export default OrchestratorCaller.getInstance();

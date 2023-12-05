@@ -5,6 +5,7 @@ import {
   createGenerationRequestSchema,
   getGenerationRequestsSchema,
   getGenerationResourcesSchema,
+  refineGenerationSchema,
 } from '~/server/schema/generation.schema';
 import {
   bulkDeleteGeneratedImages,
@@ -16,6 +17,7 @@ import {
   getGenerationRequests,
   getGenerationResources,
   getGenerationStatusMessage,
+  refineImageGeneration,
 } from '~/server/services/generation/generation.service';
 import {
   guardedProcedure,
@@ -63,4 +65,7 @@ export const generationRouter = router({
   getStatusMessage: publicProcedure
     .use(edgeCacheIt({ ttl: CacheTTL.sm }))
     .query(() => getGenerationStatusMessage()),
+  refine: protectedProcedure
+    .input(refineGenerationSchema)
+    .mutation(({ input }) => refineImageGeneration(input)),
 });

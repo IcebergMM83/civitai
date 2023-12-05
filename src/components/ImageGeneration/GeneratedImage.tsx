@@ -26,7 +26,10 @@ import { generationImageSelect } from '~/components/ImageGeneration/utils/genera
 import { Generation } from '~/server/services/generation/generation.types';
 import { generationStore } from '~/store/generation.store';
 import { constants } from '~/server/common/constants';
-import { useDeleteGenerationRequestImages } from '~/components/ImageGeneration/utils/generationRequestHooks';
+import {
+  useDeleteGenerationRequestImages,
+  useRefineGenerationRequest,
+} from '~/components/ImageGeneration/utils/generationRequestHooks';
 import { ImageMetaPopover } from '~/components/ImageMeta/ImageMeta';
 import { useInView } from '~/hooks/useInView';
 import { useRef } from 'react';
@@ -86,6 +89,11 @@ export function GeneratedImage({
       zIndex: constants.imageGeneration.drawerZIndex + 2,
       centered: true,
     });
+  };
+
+  const { refine, loading } = useRefineGenerationRequest();
+  const handleRefinement = async ({ jobId, type }: Parameters<typeof refine>[0]) => {
+    await refine({ jobId, type }).catch(() => null);
   };
 
   const imageRef = useRef<HTMLImageElement>(null);
@@ -183,7 +191,7 @@ export function GeneratedImage({
             <Menu zIndex={400} withinPortal>
               <Menu.Target>
                 <div className={classes.menuTarget}>
-                  <ActionIcon variant="transparent">
+                  <ActionIcon variant="transparent" loading={loading}>
                     <IconDotsVertical
                       size={26}
                       color="#fff"
@@ -211,6 +219,14 @@ export function GeneratedImage({
                   icon={<IconTrash size={14} stroke={1.5} />}
                 >
                   Delete
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Label>Refinements</Menu.Label>
+                <Menu.Item onClick={() => handleRefinement({ type: 'face', jobId: image.hash })}>
+                  Refine face
+                </Menu.Item>
+                <Menu.Item onClick={() => handleRefinement({ type: 'subject', jobId: image.hash })}>
+                  Refine subject
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Label>Coming soon</Menu.Label>
