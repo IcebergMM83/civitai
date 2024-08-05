@@ -27,6 +27,8 @@ import {
   IconThumbUp,
   IconTrash,
   IconWand,
+  IconHeart,
+  IconTag,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useRef } from 'react';
@@ -154,6 +156,7 @@ export function GeneratedImage({
   const feedback = step.metadata?.images?.[image.id]?.feedback;
   const badFeedbackSelected = feedback === 'disliked';
   const goodFeedbackSelected = feedback === 'liked';
+  const favoriteSelected = step.metadata?.images?.[image.id]?.favorite === true;
   const available = image.status === 'succeeded';
 
   function handleToggleFeedback(newFeedback: 'liked' | 'disliked') {
@@ -175,6 +178,20 @@ export function GeneratedImage({
         images: {
           [image.id]: {
             feedback: newFeedback,
+          },
+        },
+      },
+    ]);
+  }
+
+  function handleToggleFavorite(newValue: true | false) {
+    updateImages([
+      {
+        workflowId: request.id,
+        stepName: step.name,
+        images: {
+          [image.id]: {
+            favorite: newValue,
           },
         },
       },
@@ -341,6 +358,19 @@ export function GeneratedImage({
                     onClick={() => handleToggleFeedback('disliked')}
                   >
                     <IconThumbDown size={16} />
+                  </ActionIcon>
+
+                  <ActionIcon size="md"
+                    variant={favoriteSelected ? 'light' : undefined}
+                    color={favoriteSelected ? 'red' : undefined}
+                    disabled={isLoading}
+                    onClick={() => handleToggleFavorite(!favoriteSelected)}
+                  >
+                    <IconHeart size={16} />
+                  </ActionIcon>
+
+                  <ActionIcon size="md">
+                    <IconTag size={16} />
                   </ActionIcon>
 
                   {!!img2imgWorkflows?.length && canRemix && (

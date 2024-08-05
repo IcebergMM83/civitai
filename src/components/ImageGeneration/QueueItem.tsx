@@ -145,8 +145,8 @@ export function QueueItem({
     hasUnstableResources && status === 'failed'
       ? `${status} - Potentially caused by unstable resources`
       : status === 'failed'
-      ? `${status} - Generations can error for any number of reasons, try regenerating or swapping what models/additional resources you're using.`
-      : status;
+        ? `${status} - Generations can error for any number of reasons, try regenerating or swapping what models/additional resources you're using.`
+        : status;
 
   const actualCost = cost;
 
@@ -179,7 +179,7 @@ export function QueueItem({
             </Text>
             {!!actualCost &&
               dayjs(request.createdAt).toDate() >=
-                constants.buzz.generationBuzzChargingStartDate && (
+              constants.buzz.generationBuzzChargingStartDate && (
                 <GenerationCostPopover
                   workflowCost={request.cost ?? {}}
                   disabled={!features.creatorComp}
@@ -206,9 +206,8 @@ export function QueueItem({
               </ButtonTooltip>
             )}
             <PopConfirm
-              message={`Are you sure you want to ${
-                pendingProcessing ? 'cancel' : 'delete'
-              } this job?`}
+              message={`Are you sure you want to ${pendingProcessing ? 'cancel' : 'delete'
+                } this job?`}
               position="bottom-end"
               onConfirm={pendingProcessing ? handleCancel : handleDeleteQueueItem}
             >
@@ -291,7 +290,7 @@ const useStyle = createStyles((theme) => ({
   grid: {
     display: 'grid',
     gap: theme.spacing.xs,
-    gridTemplateColumns: 'repeat(2, 1fr)', // default for larger screens, max 6 columns
+    gridTemplateColumns: 'repeat(1, 1fr)', // default for larger screens, max 6 columns
 
     // [`@media (max-width: ${theme.breakpoints.xl}px)`]: {
     //   gridTemplateColumns: 'repeat(4, 1fr)', // 4 columns for screens smaller than xl
